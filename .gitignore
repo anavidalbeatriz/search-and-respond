@@ -1,0 +1,35 @@
+# Ignore Python bytecode files
+*.pyc
+*.pyo
+*.pyd
+__pycache__
+
+# Ignore virtual environment directories
+venv/
+ENV/
+env/
+.venv/
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+
+# Ignore configuration files
+*.env
+*.ini
+*.log
+
+# Ignore credentials and keys
+google-key.json
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore the build directories
+build/
+dist/
+*.egg-info
+
+# Ignore documentation download folder
+docs/

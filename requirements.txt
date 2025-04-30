@@ -1,0 +1,17 @@
+langchain
+langchain-core
+langchain-google-genai
+google-generativeai
+google-cloud-storage
+pypdf
+faiss-cpu
+python-dotenv
+unstructured
+unstructured[pdf]
+tabulate
+pdf2image
+tiktoken
+sentence-transformers
+langchain-community
+python-docx
+docx2txt
