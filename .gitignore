@@ -33,3 +33,9 @@ dist/
 
 # Ignore documentation download folder
 docs/
+
+# Ignore pgvector folder
+pgvector/
+
+# Ignore docker-compose file
+docker-compose.yml

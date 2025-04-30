@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  pgvector-db:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pgvector-db-test
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: vectordb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:

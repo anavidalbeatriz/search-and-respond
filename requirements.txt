@@ -15,3 +15,5 @@ sentence-transformers
 langchain-community
 python-docx
 docx2txt
+pgvector 
+psycopg2-binary
