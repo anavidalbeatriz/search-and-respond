@@ -2,7 +2,7 @@ import os
 import io
 import tempfile
 from dotenv import load_dotenv
-from config import BUCKET_NAME, SOURCE_BLOB_NAME, PGVECTOR_CONNECTION_STRING
+from config import BUCKET_NAME, PGVECTOR_CONNECTION_STRING
 from google.cloud import storage
 
 from langchain_core.documents import Document
@@ -21,14 +21,18 @@ client = storage.Client()
 buckets = list(client.list_buckets())
 print("✅ GCS authentication successful. Buckets found:", [b.name for b in buckets])
 
-
 def load_documents_from_gcs():
+    """Load all documents from GCS bucket."""
     bucket = client.bucket(BUCKET_NAME)
     all_documents = []
     loaded_files = 0
     skipped_files = 0
 
-    for blob_path in SOURCE_BLOB_NAME:
+    # List all blobs (files) in the bucket
+    all_blobs = [blob.name for blob in bucket.list_blobs()]
+    print("All blobs in bucket:", all_blobs)
+
+    for blob_path in all_blobs:
         try:
             blob = bucket.blob(blob_path)
             filename = os.path.basename(blob_path)
@@ -71,7 +75,6 @@ def load_documents_from_gcs():
     print(f"   📄 Total documents loaded: {len(all_documents)}")
     return all_documents
 
-
 def create_index(documents):
     print("🔍 Generating embeddings with Gemini...")
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
@@ -86,12 +89,10 @@ def create_index(documents):
     print("✅ PGVector index created and stored.")
     return vector_store
 
-
 def create_qa_chain(index):
     retriever = index.as_retriever()
     llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash")
     return RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
-
 
 def run_agent(query: str):
     documents = load_documents_from_gcs()
@@ -104,7 +105,6 @@ def run_agent(query: str):
     if "Sorry, I cannot answer that" in response:
         return "Sorry, I don't have information about that topic."
     return response
-
 
 if __name__ == "__main__":
     while True:

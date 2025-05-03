@@ -19,3 +19,6 @@ pgvector
 psycopg2-binary
 Flask
 flask-cors
+pymupdf
+unstructured 
+python-docx

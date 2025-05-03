@@ -1,13 +1,42 @@
-# config.py
 import os
 from dotenv import load_dotenv
+from google.cloud import storage
+from google.oauth2 import service_account
+
+# Load environment variables from .env
 load_dotenv()
 
-BUCKET_NAME = "shared-resources-sample"
-SOURCE_BLOB_NAME = [
-    "project-planning/[Guidelines] Project Change.docx",
-    "project-planning/[Guidelines] Project Planning - work in progress.docx",
-    "project-planning/[Guidelines] Project Planning.docx"
-]
-LOCAL_PATH = "C:/Users/AnaBeatrizVidal/Downloads/search-and-respond-main/search-and-respond-main/docs"
-PGVECTOR_CONNECTION_STRING = os.getenv("PGVECTOR_CONNECTION_STRING")
+BUCKET_NAME = "shared-resources-sample"  # Your Google Cloud Storage bucket name
+GOOGLE_KEY_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")  # Google credentials path
+PGVECTOR_CONNECTION_STRING = os.getenv("PGVECTOR_CONNECTION_STRING")  # PostgreSQL connection string for PGVector
+
+# Debug: check if the key path is loaded correctly and exists
+print("Key path:", GOOGLE_KEY_PATH)
+print("File exists?", os.path.exists(GOOGLE_KEY_PATH))
+
+# Load credentials and set up Google Cloud Storage client
+credentials = service_account.Credentials.from_service_account_file(GOOGLE_KEY_PATH)
+storage_client = storage.Client(credentials=credentials, project=credentials.project_id)
+bucket = storage_client.bucket(BUCKET_NAME)
+
+def list_all_blobs():
+    """Lists all blob names in the bucket."""
+    return [blob.name for blob in bucket.list_blobs()]
+
+def load_blob_content(blob_name):
+    """Returns the content of a blob as bytes."""
+    blob = bucket.blob(blob_name)
+    return blob.download_as_bytes()
+
+# List all blobs in the bucket and print them
+all_blobs = list_all_blobs()
+print("All blobs in bucket:", all_blobs)
+
+# Automatically get the first blob if any exist
+SOURCE_BLOB_NAME = all_blobs[0] if all_blobs else None
+
+# Ensure that the source blob is not None and valid
+if SOURCE_BLOB_NAME is None:
+    print("No blobs found in the bucket.")
+else:
+    print("Using SOURCE_BLOB_NAME:", SOURCE_BLOB_NAME)
