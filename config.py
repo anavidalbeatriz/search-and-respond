@@ -1,3 +1,5 @@
+# config.py
+
 import os
 from dotenv import load_dotenv
 from google.cloud import storage
@@ -6,9 +8,9 @@ from google.oauth2 import service_account
 # Load environment variables from .env
 load_dotenv()
 
-BUCKET_NAME = "shared-resources-sample"  # Your Google Cloud Storage bucket name
-GOOGLE_KEY_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")  # Google credentials path
-PGVECTOR_CONNECTION_STRING = os.getenv("PGVECTOR_CONNECTION_STRING")  # PostgreSQL connection string for PGVector
+BUCKET_NAME = "shared-resources-sample"
+GOOGLE_KEY_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+PGVECTOR_CONNECTION_STRING = os.getenv("PGVECTOR_CONNECTION_STRING")
 
 # Debug: check if the key path is loaded correctly and exists
 print("Key path:", GOOGLE_KEY_PATH)
@@ -28,15 +30,15 @@ def load_blob_content(blob_name):
     blob = bucket.blob(blob_name)
     return blob.download_as_bytes()
 
-# List all blobs in the bucket and print them
+# Dynamically fetch all blobs in the bucket
 all_blobs = list_all_blobs()
 print("All blobs in bucket:", all_blobs)
 
-# Automatically get the first blob if any exist
-SOURCE_BLOB_NAME = all_blobs[0] if all_blobs else None
+# Set SOURCE_BLOB_NAME to the list of all blobs found
+SOURCE_BLOB_NAME = all_blobs if all_blobs else None
 
-# Ensure that the source blob is not None and valid
-if SOURCE_BLOB_NAME is None:
+# Ensure that the source blob list is not empty
+if not SOURCE_BLOB_NAME:
     print("No blobs found in the bucket.")
 else:
-    print("Using SOURCE_BLOB_NAME:", SOURCE_BLOB_NAME)
+    print("Using the following SOURCE_BLOB_NAMES:", SOURCE_BLOB_NAME)

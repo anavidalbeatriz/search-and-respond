@@ -22,17 +22,20 @@ buckets = list(client.list_buckets())
 print("✅ GCS authentication successful. Buckets found:", [b.name for b in buckets])
 
 def load_documents_from_gcs():
-    """Load all documents from GCS bucket."""
     bucket = client.bucket(BUCKET_NAME)
     all_documents = []
     loaded_files = 0
     skipped_files = 0
 
-    # List all blobs (files) in the bucket
-    all_blobs = [blob.name for blob in bucket.list_blobs()]
-    print("All blobs in bucket:", all_blobs)
+    # List all blobs in the bucket dynamically
+    source_blob_names = [blob.name for blob in bucket.list_blobs()]
 
-    for blob_path in all_blobs:
+    if not source_blob_names:
+        print("⚠️ No blobs found in the bucket.")
+        return all_documents
+
+    # Iterate over all the blobs
+    for blob_path in source_blob_names:
         try:
             blob = bucket.blob(blob_path)
             filename = os.path.basename(blob_path)
@@ -102,9 +105,17 @@ def run_agent(query: str):
     instructed_query = get_agent_instructions(query)
     response = qa_chain.run(instructed_query)
 
+    # Check if the response is "Sorry, I cannot answer that"
     if "Sorry, I cannot answer that" in response:
         return "Sorry, I don't have information about that topic."
-    return response
+
+    # Collect document names from the metadata
+    document_names = ", ".join([doc.metadata["file_name"] for doc in documents if doc.metadata])
+
+    # Append the document names to the response
+    response_with_file_name = f"{response}\n\nYou can refer to the following document(s) for more details: {document_names}"
+
+    return response_with_file_name
 
 if __name__ == "__main__":
     while True:
