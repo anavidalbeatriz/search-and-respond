@@ -6,6 +6,7 @@ function App() {
   const [query, setQuery] = useState('');
 
   const handleSubmit = async (e) => {
+    console.log("Form submitted with query:", query);  // Add this
     e.preventDefault();
 
     if (!query.trim()) return;
@@ -14,7 +15,7 @@ function App() {
     setMessages(prev => [...prev, userMessage]);
 
     try {
-      const res = await fetch('http://localhost:5000/query', {
+      const res = await fetch('http://172.27.152.214:3000/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })

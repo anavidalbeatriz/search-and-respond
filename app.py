@@ -3,11 +3,12 @@ from flask_cors import CORS
 from main import run_agent  # Your function to handle the query
 
 app = Flask(__name__)  # ✅ Only create the app once
-CORS(app)  # ✅ Enable CORS
+CORS(app, resources={r"/*": {"origins": "*"}})  # ✅ Enable CORS
 
 @app.route('/query', methods=['POST'])
 def query_agent():
     user_query = request.json.get('query')
+    print("Received query:", user_query)  # Add this
     if user_query:
         response = run_agent(user_query)
         return jsonify({"response": response})
