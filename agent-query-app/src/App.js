@@ -15,7 +15,7 @@ function App() {
     setMessages(prev => [...prev, userMessage]);
 
     try {
-      const res = await fetch('http://172.27.152.214:3000/query', {
+      const res = await fetch('http://localhost:5000/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query })

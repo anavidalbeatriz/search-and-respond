@@ -8,13 +8,15 @@ from google.oauth2 import service_account
 # Load environment variables from .env
 load_dotenv()
 
-BUCKET_NAME = "shared-resources-sample"
+# Read variables from .env
+BUCKET_NAME = os.getenv("BUCKET_NAME")
 GOOGLE_KEY_PATH = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 PGVECTOR_CONNECTION_STRING = os.getenv("PGVECTOR_CONNECTION_STRING")
 
 # Debug: check if the key path is loaded correctly and exists
 print("Key path:", GOOGLE_KEY_PATH)
 print("File exists?", os.path.exists(GOOGLE_KEY_PATH))
+print("Bucket name:", BUCKET_NAME)
 
 # Load credentials and set up Google Cloud Storage client
 credentials = service_account.Credentials.from_service_account_file(GOOGLE_KEY_PATH)
